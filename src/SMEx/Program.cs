@@ -10,9 +10,6 @@ namespace SMEx
 {
     public class Program
     {
-		// put everything into this folder (relative to working directory)
-		private const string FOLDER = "Downloads";
-
         public static void Main(string[] args)
         {
 			// load config
@@ -36,11 +33,11 @@ namespace SMEx
 			foreach (var folder in SmugMugHelper.Folders)
 			{
 				Console.WriteLine("folder: " + folder.Name);
-				Directory.CreateDirectory(FOLDER + folder.UrlPath);
+				Directory.CreateDirectory(config["folder"] + folder.UrlPath);
 				foreach  (var album in SmugMugHelper.Albums(folder))
 				{
 					Console.WriteLine("> album: " + album.Name);
-					Directory.CreateDirectory(FOLDER + album.UrlPath);
+					Directory.CreateDirectory(config["folder"] + album.UrlPath);
 
 					Parallel.ForEach(SmugMugHelper.Images(album), new ParallelOptions { MaxDegreeOfParallelism = 4 }, image =>
 					{
@@ -51,7 +48,7 @@ namespace SMEx
 						file = invalidChars.Replace(file, "_");
 
 						Console.WriteLine("  > image: " + file);
-						string filename = FOLDER + album.UrlPath + "/" + file;
+						string filename = config["folder"] + album.UrlPath + "/" + file;
 						if (!File.Exists(filename))
 						{
 							File.WriteAllBytes(filename, SmugMugHelper.Download(image.ArchivedUri));
@@ -62,13 +59,4 @@ namespace SMEx
 			Console.ReadLine();
 		}
     }
-
-	public class SMExSettings
-	{
-		public string Folder { get; set; }
-
-		public string SmugMugKey { get; set; }
-
-		public string SmugMugSecret { get; set; }
-	}
 }
