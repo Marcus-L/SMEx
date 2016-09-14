@@ -63,7 +63,8 @@ namespace SMEx
 					});
 				}
 			}
-			Console.ReadLine();
+			Console.WriteLine("Done!");
+			System.Threading.Thread.Sleep(1000);
 		}
     }
 }

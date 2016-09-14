@@ -114,9 +114,25 @@ namespace SMEx
 
 		public static IEnumerable<SmugModel.Image> Images(SmugModel.Node album)
 		{
-			var images = GetJson(album.Uri + "!images");
-			return images["Response"]["AlbumImage"].Children()
-				.Select(j => j.ToObject<SmugModel.Image>());
+			var images = new List<SmugModel.Image>();
+
+			var req = GetJson(album.Uri + "!images");
+			while (true)
+			{
+				images.AddRange(req["Response"]["AlbumImage"].Children()
+					.Select(j => j.ToObject<SmugModel.Image>()));
+
+				if (req["Response"]["Pages"]["NextPage"] != null)
+				{
+					req = GetJson(req["Response"]["Pages"]["NextPage"].Value<string>());
+				}
+				else
+				{
+					break;
+				}
+			}
+
+			return images;
 		}
 	}
 
