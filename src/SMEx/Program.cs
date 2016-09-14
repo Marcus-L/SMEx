@@ -51,7 +51,14 @@ namespace SMEx
 						string filename = config["folder"] + album.UrlPath + "/" + file;
 						if (!File.Exists(filename))
 						{
-							File.WriteAllBytes(filename, SmugMugHelper.Download(image.ArchivedUri));
+							try
+							{
+								File.WriteAllBytes(filename, SmugMugHelper.Download(image.ArchivedUri));
+							}
+							catch (Exception ex)
+							{
+								Console.Error.WriteLine($"Error while downloading: {file}: {ex.Message}");
+							}
 						}
 					});
 				}
